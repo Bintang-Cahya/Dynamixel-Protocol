@@ -9,6 +9,7 @@
 #define DYNAMIXEL_H_
 
 #include "main.h"
+#include <string.h>
 
 /*
  * Dynamixel Protocol 1.0 Packet Structure:
@@ -177,9 +178,11 @@ uint8_t dxl_set_shutdown(uint8_t id, uint8_t error_code);
 
 uint8_t dxl_get_torque_enable(uint8_t id, uint8_t *data);
 uint8_t dxl_set_torque_enable(uint8_t id, uint8_t state);
+uint8_t dxl_reg_torque_enable(uint8_t id, uint8_t state);
 
 uint8_t dxl_get_led(uint8_t id, uint8_t *data);
 uint8_t dxl_set_led(uint8_t id, uint8_t state);
+uint8_t dxl_reg_led(uint8_t id, uint8_t state);
 
 uint8_t dxl_get_lock(uint8_t id, uint8_t *data);
 uint8_t dxl_set_lock(uint8_t id, uint8_t state);
@@ -200,17 +203,20 @@ uint8_t dxl_set_ccw_compliance_slope(uint8_t id, uint8_t steps);
  * Motion Control
  *============================================================================*/
 
-//uint8_t dxl_move(uint8_t id, uint16_t position);
-//uint8_t dxl_move_speed(uint8_t id, uint16_t position, uint16_t speed);
-
 uint8_t dxl_get_goal_position(uint8_t id, uint16_t *data);
 uint8_t dxl_set_goal_position(uint8_t id, uint16_t position);
+uint8_t dxl_reg_goal_position(uint8_t id, uint16_t position);
 
 uint8_t dxl_get_moving_speed(uint8_t id, uint16_t *data);
 uint8_t dxl_set_moving_speed(uint8_t id, uint16_t speed);
+uint8_t dxl_reg_moving_speed(uint8_t id, uint16_t speed);
+
+uint8_t dxl_set_goal_position_and_speed(uint8_t id, uint16_t position, uint16_t speed);
+uint8_t dxl_reg_goal_position_and_speed(uint8_t id, uint16_t position, uint16_t speed);
 
 uint8_t dxl_get_torque_limit(uint8_t id, uint16_t *data);
 uint8_t dxl_set_torque_limit(uint8_t id, uint16_t torque);
+uint8_t dxl_reg_torque_limit(uint8_t id, uint16_t torque);
 
 
 /*==============================================================================
