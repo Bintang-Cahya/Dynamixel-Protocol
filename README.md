@@ -31,39 +31,6 @@ Designed for STM32 projects using the HAL driver.
 
 ---
 
-# File Structure
-
-```text
-.
-├── dynamixel.c
-├── dynamixel.h
-└── README.md
-```
-
----
-
-# Requirements
-
-* STM32 HAL Library
-* UART configured in Half-Duplex mode
-* Direction control pin (TX/RX enable)
-
----
-
-# Hardware Connection
-
-Typical half-duplex UART connection:
-
-```text
-STM32 TX/RX  <---->  Dynamixel DATA
-STM32 GND    <---->  Dynamixel GND
-STM32 VCC    <---->  Dynamixel VCC
-```
-
-Direction pin is used to switch between transmit and receive mode.
-
----
-
 # Initialization
 
 ## Include Header
@@ -214,48 +181,18 @@ if(err == 0)
 
 # Supported Instructions
 
-| Instruction       | Value |
-| ----------------- | ----- |
-| AX_PING           | 0x01  |
-| AX_READ_DATA      | 0x02  |
-| AX_WRITE_DATA     | 0x03  |
-| AX_REG_WRITE      | 0x04  |
-| AX_ACTION         | 0x05  |
-| AX_RESET          | 0x06  |
-| AX_REBOOT         | 0x08  |
-| AX_SYNC_WRITE     | 0x83  |
-| AX_SYNC_REG_WRITE | 0x84  |
-| AX_BULK_READ      | 0x92  |
-
----
-
-# Common Register Addresses
-
-## EEPROM Area
-
-| Register             | Address |
-| -------------------- | ------- |
-| AX_ID                | 0x03    |
-| AX_BAUD_RATE         | 0x04    |
-| AX_RETURN_DELAY      | 0x05    |
-| AX_CW_ANGLE_LIMIT_L  | 0x06    |
-| AX_CCW_ANGLE_LIMIT_L | 0x08    |
-| AX_MAX_TORQUE_L      | 0x0E    |
-
-## RAM Area
-
-| Register               | Address |
-| ---------------------- | ------- |
-| AX_TORQUE_ENABLE       | 0x18    |
-| AX_LED                 | 0x19    |
-| AX_GOAL_POSITION_L     | 0x1E    |
-| AX_MOVING_SPEED_L      | 0x20    |
-| AX_PRESENT_POSITION_L  | 0x24    |
-| AX_PRESENT_SPEED_L     | 0x26    |
-| AX_PRESENT_LOAD_L      | 0x28    |
-| AX_PRESENT_VOLTAGE     | 0x2A    |
-| AX_PRESENT_TEMPERATURE | 0x2B    |
-| AX_MOVING              | 0x2E    |
+| Instruction       | Support |
+| ----------------- | ------- |
+| AX_PING           | ☑      |
+| AX_READ_DATA      | ☑      |
+| AX_WRITE_DATA     | ☑      |
+| AX_REG_WRITE      | ☑      |
+| AX_ACTION         | ☑      |
+| AX_RESET          | ☐      |
+| AX_REBOOT         | ☐      |
+| AX_SYNC_WRITE     | ☐      |
+| AX_SYNC_REG_WRITE | ☐      |
+| AX_BULK_READ      | ☐      |
 
 ---
 
@@ -280,61 +217,133 @@ void dxl_action(void);
 
 ---
 
+## Device Information
+
+```c
+uint8_t dxl_get_model_number(uint8_t id, uint16_t *data);
+uint8_t dxl_get_firmware_version(uint8_t id, uint8_t *data);
+uint8_t dxl_set_id(uint8_t id, uint8_t new_id);
+```
+
+---
+
+## Communication Settings
+
+```c
+uint8_t dxl_get_baudrate(uint8_t id, uint8_t *data);
+uint8_t dxl_set_baudrate(uint8_t id, uint8_t value);
+
+uint8_t dxl_get_return_delay_time(uint8_t id, uint8_t *data);
+uint8_t dxl_set_return_delay_time(uint8_t id, uint8_t delay);
+
+uint8_t dxl_get_status_return_level(uint8_t id, uint8_t *data);
+uint8_t dxl_set_status_return_level(uint8_t id, uint8_t level);
+```
+
+---
+
+## Motion Limit
+
+```c
+uint8_t dxl_get_cw_angle_limit(uint8_t id, uint16_t *data);
+uint8_t dxl_set_cw_angle_limit(uint8_t id, uint16_t value);
+
+uint8_t dxl_get_ccw_angle_limit(uint8_t id, uint16_t *data);
+uint8_t dxl_set_ccw_angle_limit(uint8_t id, uint16_t value);
+
+uint8_t dxl_get_max_torque(uint8_t id, uint16_t *data);
+uint8_t dxl_set_max_torque(uint8_t id, uint16_t max_torque);
+
+uint8_t dxl_get_punch(uint8_t id, uint16_t *data);
+uint8_t dxl_set_punch(uint8_t id, uint16_t current);
+```
+
+---
+
+## Safety Settings
+
+```c
+uint8_t dxl_get_temperature_limit(uint8_t id, uint8_t *data);
+uint8_t dxl_set_temperature_limit(uint8_t id, uint8_t temp);
+
+uint8_t dxl_get_min_voltage_limit(uint8_t id, uint8_t *data);
+uint8_t dxl_set_min_voltage_limit(uint8_t id, uint8_t voltage_value);
+
+uint8_t dxl_get_max_voltage_limit(uint8_t id, uint8_t *data);
+uint8_t dxl_set_max_voltage_limit(uint8_t id, uint8_t voltage_value);
+
+uint8_t dxl_get_alarm_led(uint8_t id, uint8_t *data);
+uint8_t dxl_set_alarm_led(uint8_t id, uint8_t error_code);
+
+uint8_t dxl_get_shutdown(uint8_t id, uint8_t *data);
+uint8_t dxl_set_shutdown(uint8_t id, uint8_t error_code);
+```
+
+---
+
+## Torque and LED control
+
+```c
+uint8_t dxl_get_torque_enable(uint8_t id, uint8_t *data);
+uint8_t dxl_set_torque_enable(uint8_t id, uint8_t state);
+uint8_t dxl_reg_torque_enable(uint8_t id, uint8_t state);
+
+uint8_t dxl_get_led(uint8_t id, uint8_t *data);
+uint8_t dxl_set_led(uint8_t id, uint8_t state);
+uint8_t dxl_reg_led(uint8_t id, uint8_t state);
+
+uint8_t dxl_get_lock(uint8_t id, uint8_t *data);
+uint8_t dxl_set_lock(uint8_t id, uint8_t state);
+```
+
+---
+
+## Compliance Settings
+
+```c
+uint8_t dxl_get_cw_compliance_margin(uint8_t id, uint8_t *data);
+uint8_t dxl_set_cw_compliance_margin(uint8_t id, uint8_t margin);
+
+uint8_t dxl_get_ccw_compliance_slope(uint8_t id, uint8_t *data);
+uint8_t dxl_set_ccw_compliance_slope(uint8_t id, uint8_t steps);
+```
+
+---
+
 ## Motion Control
 
 ```c
-uint8_t dxl_set_goal_position(uint8_t id, uint16_t position);
 uint8_t dxl_get_goal_position(uint8_t id, uint16_t *data);
+uint8_t dxl_set_goal_position(uint8_t id, uint16_t position);
+uint8_t dxl_reg_goal_position(uint8_t id, uint16_t position);
 
-uint8_t dxl_set_moving_speed(uint8_t id, uint16_t speed);
 uint8_t dxl_get_moving_speed(uint8_t id, uint16_t *data);
+uint8_t dxl_set_moving_speed(uint8_t id, uint16_t speed);
+uint8_t dxl_reg_moving_speed(uint8_t id, uint16_t speed);
 
-uint8_t dxl_set_goal_position_and_speed(uint8_t id,
-                                        uint16_t position,
-                                        uint16_t speed);
+uint8_t dxl_set_goal_position_and_speed(uint8_t id, uint16_t position, uint16_t speed);
+uint8_t dxl_reg_goal_position_and_speed(uint8_t id, uint16_t position, uint16_t speed);
+
+uint8_t dxl_get_torque_limit(uint8_t id, uint16_t *data);
+uint8_t dxl_set_torque_limit(uint8_t id, uint16_t torque);
+uint8_t dxl_reg_torque_limit(uint8_t id, uint16_t torque);
 ```
 
 ---
 
-## Torque & LED
+## Status and Feedback
 
 ```c
-uint8_t dxl_set_torque_enable(uint8_t id, uint8_t state);
-uint8_t dxl_set_led(uint8_t id, uint8_t state);
+uint8_t dxl_get_present_position(uint8_t id, uint16_t *data);
+uint8_t dxl_get_present_speed(uint8_t id, uint16_t *data);
+uint8_t dxl_get_present_load(uint8_t id, uint16_t *data);
+
+uint8_t dxl_get_present_voltage(uint8_t id, uint8_t *data);
+uint8_t dxl_get_present_temperature(uint8_t id, uint8_t *data);
+
+uint8_t dxl_get_registered(uint8_t id, uint8_t *data);
+uint8_t dxl_get_moving(uint8_t id, uint8_t *data);
 ```
-
----
-
-## EEPROM Settings
-
-```c
-uint8_t dxl_set_id(uint8_t id, uint8_t new_id);
-uint8_t dxl_set_baudrate(uint8_t id, uint8_t value);
-uint8_t dxl_set_return_delay_time(uint8_t id, uint8_t delay);
-```
-
----
-
-# UART Configuration Notes
-
-Recommended UART settings:
-
-| Setting   | Value       |
-| --------- | ----------- |
-| Baudrate  | 1000000     |
-| Data Bits | 8           |
-| Stop Bits | 1           |
-| Parity    | None        |
-| Mode      | Half Duplex |
-
----
-
-# Notes
-
-* Dynamixel Protocol 1.0 uses little-endian format for 16-bit data.
-* Make sure servo voltage matches your Dynamixel model.
-* Some EEPROM registers require torque to be disabled before writing.
-* Broadcast ID: `0xFE`
 
 ---
 
