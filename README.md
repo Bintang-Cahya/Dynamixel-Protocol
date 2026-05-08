@@ -7,9 +7,8 @@ This library provides simple APIs for:
 * Reading and writing Dynamixel registers
 * Motion control
 * Torque and LED control
-* EEPROM and RAM configuration
-* Packet handling and checksum validation
-* REG_WRITE and ACTION instruction support
+* Dynamixel configuration
+* instruction command support
 
 Designed for STM32 projects using the HAL driver.
 
@@ -48,12 +47,11 @@ extern UART_HandleTypeDef huart1;
 #define DXL_DIR_GPIO_Port GPIOA
 #define DXL_DIR_Pin       GPIO_PIN_8
 
+DXL_HandleTypeDef dxl = {&huart1, DXL_DIR_GPIO_Port, DXL_DIR_Pin};
+
 int main(void)
 {
     HAL_Init();
-
-    dxl_init(&huart1, DXL_DIR_GPIO_Port, DXL_DIR_Pin);
-
     while(1)
     {
 
@@ -63,7 +61,7 @@ int main(void)
 
 ---
 
-# Basic Usage
+# Example Usage
 
 ## Ping Servo
 
@@ -135,7 +133,7 @@ if(dxl_get_present_position(1, &position) == 0)
 
 ---
 
-# REG_WRITE Example
+## REG_WRITE Example
 
 Queue multiple commands before executing them simultaneously.
 
@@ -188,31 +186,23 @@ if(err == 0)
 | AX_WRITE_DATA     | ☑      |
 | AX_REG_WRITE      | ☑      |
 | AX_ACTION         | ☑      |
-| AX_RESET          | ☐      |
-| AX_REBOOT         | ☐      |
-| AX_SYNC_WRITE     | ☐      |
-| AX_SYNC_REG_WRITE | ☐      |
+| AX_RESET          | ☑      |
+| AX_REBOOT         | ☑      |
+| AX_SYNC_WRITE     | ☑      |
 | AX_BULK_READ      | ☐      |
 
 ---
 
 # Available API
 
-## Initialization
+## Instruction Commands
 
 ```c
-void dxl_init(UART_HandleTypeDef *huart_handle,
-              GPIO_TypeDef *GPIOx,
-              uint16_t GPIO_Pin);
-```
-
----
-
-## Basic Commands
-
-```c
-uint8_t dxl_ping(uint8_t id);
-void dxl_action(void);
+uint8_t dxl_ping(DXL_HandleTypeDef *dxl, uint8_t id);
+uint8_t dxl_factory_reset(DXL_HandleTypeDef *dxl, uint8_t id);
+uint8_t dxl_reboot(DXL_HandleTypeDef *dxl, uint8_t id);
+uint8_t dxl_sync_write(DXL_HandleTypeDef *dxl, uint8_t address, uint8_t *id, uint8_t *data, uint8_t id_count, uint8_t len);
+void dxl_action(DXL_HandleTypeDef *dxl);
 ```
 
 ---
