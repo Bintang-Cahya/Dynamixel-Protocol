@@ -179,17 +179,17 @@ if(err == 0)
 
 # Supported Instructions
 
-| Instruction       | Support |
-| ----------------- | ------- |
-| AX_PING           | ☑      |
-| AX_READ_DATA      | ☑      |
-| AX_WRITE_DATA     | ☑      |
-| AX_REG_WRITE      | ☑      |
-| AX_ACTION         | ☑      |
-| AX_RESET          | ☑      |
-| AX_REBOOT         | ☑      |
-| AX_SYNC_WRITE     | ☑      |
-| AX_BULK_READ      | ☐      |
+| Instruction    | Support |
+| -------------- | ------- |
+| PING           | ☑      |
+| READ_DATA      | ☑      |
+| WRITE_DATA     | ☑      |
+| REG_WRITE      | ☑      |
+| ACTION         | ☑      |
+| RESET          | ☑      |
+| REBOOT         | ☑      |
+| SYNC_WRITE     | ☑      |
+| BULK_READ      | ☐      |
 
 ---
 
